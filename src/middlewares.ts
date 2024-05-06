@@ -62,8 +62,8 @@ const getAiImage = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const saveAiImage = async (req: Request, res: Response, next: NextFunction) => {
-  const imageName = `./uploads/${req.body.dish_name}.png`;
-  const file = fs.createWriteStream(imageName);
+  const imageName = req.body.dish_name + '.png';
+  const file = fs.createWriteStream('./uploads/' + imageName);
   if (!res.locals.url) {
     res.locals.file = 'default.png';
     next();
