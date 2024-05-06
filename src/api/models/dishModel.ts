@@ -21,7 +21,7 @@ const addDish = async (
     INSERT INTO ai_dish (dish_name, description, filename, dish_type)
     VALUES (?, ?, ?, ?);
     `,
-    [data.dish_name, data.description, data.filename],
+    [data.dish_name, data.description, data.filename, data.dish_type],
   );
   if (headers.affectedRows === 0) {
     throw new CustomError('Dish not added', 400);
