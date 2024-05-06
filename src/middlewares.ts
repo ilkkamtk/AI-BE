@@ -7,6 +7,7 @@ import {FieldValidationError, validationResult} from 'express-validator';
 import https from 'https';
 import fs from 'fs';
 import OpenAI from 'openai';
+import {Dish} from './types/DBTypes';
 const openai = new OpenAI({apiKey: process.env.OPENAI_API_KEY});
 
 const notFound = (req: Request, _res: Response, next: NextFunction) => {
@@ -45,14 +46,21 @@ const makeThumbnail = async (
   }
 };
 
-const getAiImage = async (req: Request, res: Response, next: NextFunction) => {
+const getAiImage = async (
+  req: Request<{}, {}, Omit<Dish, 'dish_id'>>,
+  res: Response<{}, {url: string}>,
+  next: NextFunction,
+) => {
   try {
     const response = await openai.images.generate({
       model: 'dall-e-3',
-      prompt: `Name of dish: ${req.body.dish_name}. The description of the dish: ${req.body.description}. Create a photorealistic image of the dish for a menu of a fine dining restaurant. Dont add any text to the image.`,
+      prompt: `Name of dish: ${req.body.dish_name}. The description of the dish: ${req.body.description}. Category of the dish: ${req.body.dish_type}. Dish should be on a plain white plate with no text. Dont add text anywhere in the image.`,
       n: 1,
       size: '1024x1024',
     });
+    if (!response.data[0].url) {
+      throw new CustomError('Image not generated', 500);
+    }
     res.locals.url = response.data[0].url;
     next();
   } catch (error) {
@@ -61,7 +69,11 @@ const getAiImage = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const saveAiImage = async (req: Request, res: Response, next: NextFunction) => {
+const saveAiImage = async (
+  req: Request<{}, {}, Omit<Dish, 'dish_id'>>,
+  res: Response<{}, {file: string; url: string}>,
+  next: NextFunction,
+) => {
   const imageName = req.body.dish_name + '.png';
   const file = fs.createWriteStream('./uploads/' + imageName);
   if (!res.locals.url) {
@@ -88,7 +100,7 @@ const saveAiImage = async (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-const validate = (req: Request, res: Response, next: NextFunction) => {
+const validate = (req: Request, _res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log(errors);

@@ -18,8 +18,8 @@ const addDish = async (
 ): Promise<MessageResponse> => {
   const [headers] = await promisePool.execute<ResultSetHeader>(
     `
-    INSERT INTO ai_dish (dish_name, description, filename)
-    VALUES (?, ?, ?);
+    INSERT INTO ai_dish (dish_name, description, filename, dish_type)
+    VALUES (?, ?, ?, ?);
     `,
     [data.dish_name, data.description, data.filename],
   );

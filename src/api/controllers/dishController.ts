@@ -26,6 +26,7 @@ const dishPost = async (
   try {
     const dish = req.body;
     dish.filename = res.locals.file;
+    console.log(dish);
     const result = await addDish(dish);
     res.json(result);
   } catch (error) {

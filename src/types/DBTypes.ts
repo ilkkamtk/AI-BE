@@ -3,6 +3,7 @@ type Dish = {
   dish_name: string;
   description: string;
   filename: string;
+  dish_type: string;
 };
 
 export {Dish};

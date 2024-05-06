@@ -11,6 +11,7 @@ router
   .post(
     body('dish_name').notEmpty().escape(),
     body('description').notEmpty().escape(),
+    body('dish_type').notEmpty().escape(),
     validate,
     getAiImage,
     saveAiImage,
