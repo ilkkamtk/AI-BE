@@ -53,8 +53,8 @@ const getAiImage = async (
 ) => {
   try {
     const response = await openai.images.generate({
-      model: 'dall-e-3',
-      prompt: `Name of dish: ${req.body.dish_name}. The description of the dish: ${req.body.description}. Category of the dish: ${req.body.dish_type}.`,
+      model: 'dall-e-2',
+      prompt: `Name of dish: ${req.body.dish_name}. The description of the dish: ${req.body.description}. Type of the dish: ${req.body.dish_type}.`,
       size: '1024x1024',
     });
     if (!response.data[0].url) {
